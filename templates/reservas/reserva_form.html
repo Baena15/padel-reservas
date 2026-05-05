@@ -1,0 +1,68 @@
+{% extends 'layout.html' %}
+
+{% block title %}{% if object %}Editar reserva{% else %}Nueva reserva{% endif %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h4 class="card-title">{% if object %}Editar reserva{% else %}Nueva reserva{% endif %}</h4>
+        <form method="post">
+          {% csrf_token %}
+          {% if form.non_field_errors %}
+            <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+          {% endif %}
+
+          <div class="mb-3">
+            <label class="form-label">Pista</label>
+            {{ form.pista }}
+            {% if form.pista.errors %}<div class="text-danger small">{{ form.pista.errors }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Fecha</label>
+            {{ form.fecha }}
+            {% if form.fecha.errors %}<div class="text-danger small">{{ form.fecha.errors }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Hora inicio</label>
+            {{ form.hora_inicio }}
+            {% if form.hora_inicio.errors %}<div class="text-danger small">{{ form.hora_inicio.errors }}</div>{% endif %}
+            <div class="form-text">{{ form.hora_inicio.help_text }}</div>
+          </div>
+
+          {% if not object %}
+          <div class="form-check mb-3">
+            <input type="checkbox" name="es_recurrente" id="id_es_recurrente" class="form-check-input">
+            <label for="id_es_recurrente" class="form-check-label">¿Reserva recurrente?</label>
+          </div>
+
+          <div class="mb-3" id="recurrente-options" style="display:none">
+            <label class="form-label">Duración</label>
+            {{ form.duracion }}
+          </div>
+          {% endif %}
+
+          <button type="submit" class="btn btn-success w-100">
+            {% if object %}Guardar cambios{% else %}Crear reserva{% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chk = document.getElementById('id_es_recurrente');
+const opts = document.getElementById('recurrente-options');
+if (chk) {
+  chk.addEventListener('change', function() {
+    opts.style.display = this.checked ? 'block' : 'none';
+  });
+}
+</script>
+{% endblock %}
