@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+
+{% block title %}Registro{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-5">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title text-center mb-4">Crear cuenta</h3>
+        <form method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-success w-100">Registrarse</button>
+        </form>
+        <p class="text-center mt-3 mb-0">
+          <small>¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a></small>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

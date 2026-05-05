@@ -1,0 +1,28 @@
+{% extends 'layout.html' %}
+
+{% block title %}Pistas{% endblock %}
+
+{% block content %}
+<h2><i class="bi bi-building"></i> Nuestras pistas</h2>
+<div class="row mt-4">
+  {% for pista in pistas %}
+  <div class="col-md-3 mb-4">
+    <div class="card h-100 {% if not pista.disponible %}border-danger{% endif %}">
+      <div class="card-body">
+        <h5 class="card-title">{{ pista.nombre }}</h5>
+        <span class="badge {% if pista.tipo == 'indoor' %}bg-primary{% else %}bg-warning text-dark{% endif %}">
+          {{ pista.get_tipo_display }}
+        </span>
+        {% if pista.disponible %}
+          <span class="badge bg-success">Disponible</span>
+        {% else %}
+          <span class="badge bg-danger">No disponible</span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p>No hay pistas registradas.</p>
+  {% endfor %}
+</div>
+{% endblock %}

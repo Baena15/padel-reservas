@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.views.generic import ListView
+from .models import Pista
 
-# Create your views here.
+
+class PistaListView(ListView):
+    model = Pista
+    template_name = "pistas/pista_list.html"
+    context_object_name = "pistas"

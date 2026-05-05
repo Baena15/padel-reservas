@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from django.views.generic import ListView
+from .models import Reserva
 
-# Create your views here.
+
+class ReservaListView(ListView):
+    model = Reserva
+    template_name = "reservas/reserva_list.html"
+    context_object_name = "reservas"

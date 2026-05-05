@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+
+{% block title %}Inicio — Padel Reservas{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+  <h1 class="display-4 fw-bold text-success"><i class="bi bi-trophy"></i> Padel Reservas</h1>
+  <p class="lead">Reserva pistas, apúntate a clases, encuentra partidos y compite en torneos.</p>
+  <div class="d-flex justify-content-center gap-3 mt-4">
+    <a href="{% url 'pista_list' %}" class="btn btn-success btn-lg"><i class="bi bi-calendar-check"></i> Reservar pista</a>
+    <a href="{% url 'partido_list' %}" class="btn btn-outline-success btn-lg"><i class="bi bi-people"></i> Buscar partido</a>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <i class="bi bi-building display-4 text-success"></i>
+        <h5 class="card-title mt-2">14 Pistas</h5>
+        <p class="card-text">8 indoor y 6 outdoor disponibles para reservar.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <i class="bi bi-person-video3 display-4 text-success"></i>
+        <h5 class="card-title mt-2">Clases</h5>
+        <p class="card-text">Entrenamiento con monitores profesionales.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <i class="bi bi-people-fill display-4 text-success"></i>
+        <h5 class="card-title mt-2">Partidos</h5>
+        <p class="card-text">Abre o únete a partidos con jugadores de tu nivel.</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <i class="bi bi-trophy-fill display-4 text-success"></i>
+        <h5 class="card-title mt-2">Torneos</h5>
+        <p class="card-text">Compite en torneos mini o personalizados.</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
