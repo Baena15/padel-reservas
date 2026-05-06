@@ -1,5 +1,6 @@
 from django import forms
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from datetime import datetime, date, time, timedelta
 from .models import Partido
 from pistas.models import Pista, Bloqueo
