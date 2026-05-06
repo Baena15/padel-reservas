@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, FormView
 from django.views import View
 from django.contrib import messages
-from django.db.models import Count
+from django.db.models import Count, Q, F
 
 from .models import Torneo, PartidoTorneo, InscripcionTorneo
 from .forms import TorneoForm, InscripcionParejaForm
@@ -40,6 +40,8 @@ class TorneoDetailView(DetailView):
         ).order_by("fecha", "hora_inicio")
         context["inscripciones"] = self.object.inscripciones.select_related(
             "jugador", "pareja"
+        ).filter(
+            Q(pareja__isnull=True) | Q(jugador__id__lt=F("pareja__id"))
         ).order_by("fecha_inscripcion")
         if self.request.user.is_authenticated:
             context["ya_inscrito"] = self.object.inscripciones.filter(
