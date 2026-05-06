@@ -12,6 +12,25 @@ HORA_DESCANSO_INICIO = time(13, 30)
 HORA_DESCANSO_FIN = time(16, 0)
 DURACION_PARTIDO = timedelta(minutes=90)
 
+FRANJAS_HORARIAS = [
+    ("09:00", "09:00"),
+    ("09:30", "09:30"),
+    ("10:00", "10:00"),
+    ("10:30", "10:30"),
+    ("11:00", "11:00"),
+    ("11:30", "11:30"),
+    ("12:00", "12:00"),
+    ("16:00", "16:00"),
+    ("16:30", "16:30"),
+    ("17:00", "17:00"),
+    ("17:30", "17:30"),
+    ("18:00", "18:00"),
+    ("18:30", "18:30"),
+    ("19:00", "19:00"),
+    ("19:30", "19:30"),
+    ("21:00", "21:00"),
+]
+
 
 class PartidoForm(forms.ModelForm):
     class Meta:
@@ -19,7 +38,7 @@ class PartidoForm(forms.ModelForm):
         fields = ["pista", "fecha", "hora_inicio", "nivel_minimo", "max_jugadores"]
         widgets = {
             "fecha": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
-            "hora_inicio": forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
+            "hora_inicio": forms.Select(choices=FRANJAS_HORARIAS, attrs={"class": "form-select"}),
             "pista": forms.Select(attrs={"class": "form-select"}),
             "nivel_minimo": forms.Select(attrs={"class": "form-select"}),
             "max_jugadores": forms.NumberInput(attrs={"class": "form-control", "min": 2, "max": 4}),
@@ -28,8 +47,7 @@ class PartidoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["pista"].queryset = Pista.objects.filter(disponible=True)
-        self.fields["nivel_minimo"].required = False
-        self.fields["hora_inicio"].help_text = "El partido dura 90 minutos."
+        self.fields["hora_inicio"].help_text = "Horario mañana: 9:00 – 12:00 | Tarde: 16:00 – 21:00. Duración 90 min."
 
     def clean_hora_inicio(self):
         hora = self.cleaned_data.get("hora_inicio")
@@ -39,6 +57,8 @@ class PartidoForm(forms.ModelForm):
             raise ValidationError("El club abre a las 9:00.")
         if hora > HORA_CIERRE:
             raise ValidationError("La última hora es a las 21:00.")
+        if hora.minute not in (0, 30):
+            raise ValidationError("Los partidos solo pueden empezar en punto o en media hora (ej. 10:00, 10:30).")
         hora_fin = (datetime.combine(date.today(), hora) + DURACION_PARTIDO).time()
         if hora < HORA_DESCANSO_INICIO and hora_fin > HORA_DESCANSO_INICIO:
             raise ValidationError("El partido cruza el horario de cierre (13:30-16:00).")

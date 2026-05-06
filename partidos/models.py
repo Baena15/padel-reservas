@@ -14,7 +14,7 @@ class Partido(models.Model):
     fecha = models.DateField()
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
-    nivel_minimo = models.CharField(max_length=20, choices=CATEGORIAS, blank=True)
+    nivel_minimo = models.CharField(max_length=20, choices=CATEGORIAS)
     max_jugadores = models.PositiveIntegerField(default=4)
     estado = models.CharField(max_length=20, choices=ESTADOS, default="abierto")
     creado = models.DateTimeField(auto_now_add=True)
