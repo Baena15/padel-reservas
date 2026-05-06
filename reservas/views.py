@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, View
 from django.urls import reverse_lazy
 from django.db import transaction
 from datetime import timedelta
@@ -13,12 +13,18 @@ from .forms import ReservaForm
 from pagos.models import Pago
 
 
+def es_admin(user):
+    return user.is_staff or (hasattr(user, "perfil") and user.perfil.rol == "admin")
+
+
 class ReservaListView(LoginRequiredMixin, ListView):
     model = Reserva
     template_name = "reservas/reserva_list.html"
     context_object_name = "reservas"
 
     def get_queryset(self):
+        if es_admin(self.request.user):
+            return Reserva.objects.all()
         return Reserva.objects.filter(usuario=self.request.user)
 
 
@@ -27,6 +33,11 @@ class ReservaDetailView(LoginRequiredMixin, DetailView):
     template_name = "reservas/reserva_detail.html"
     context_object_name = "reserva"
     pk_url_kwarg = "pk"
+
+    def get_queryset(self):
+        if es_admin(self.request.user):
+            return Reserva.objects.all()
+        return Reserva.objects.filter(usuario=self.request.user)
 
 
 class ReservaCreateView(LoginRequiredMixin, CreateView):
@@ -104,6 +115,8 @@ class ReservaUpdateView(LoginRequiredMixin, UpdateView):
     pk_url_kwarg = "pk"
 
     def get_queryset(self):
+        if es_admin(self.request.user):
+            return Reserva.objects.all()
         return Reserva.objects.filter(usuario=self.request.user)
 
     def get_form_kwargs(self):
@@ -124,6 +137,8 @@ class ReservaDeleteView(LoginRequiredMixin, DeleteView):
     pk_url_kwarg = "pk"
 
     def get_queryset(self):
+        if es_admin(self.request.user):
+            return Reserva.objects.all()
         return Reserva.objects.filter(usuario=self.request.user)
 
     def delete(self, request, *args, **kwargs):
@@ -133,7 +148,11 @@ class ReservaDeleteView(LoginRequiredMixin, DeleteView):
 
 @login_required
 def reserva_cancelar(request, pk):
-    reserva = get_object_or_404(Reserva, pk=pk, usuario=request.user)
+    if es_admin(request.user):
+        reserva = get_object_or_404(Reserva, pk=pk)
+    else:
+        reserva = get_object_or_404(Reserva, pk=pk, usuario=request.user)
+
     if reserva.estado != "cancelada":
         reserva.estado = "cancelada"
         reserva.save()

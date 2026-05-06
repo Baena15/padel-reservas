@@ -18,6 +18,21 @@
         {% else %}
           <span class="badge bg-danger">No disponible</span>
         {% endif %}
+
+        {% if user.is_staff or user.perfil.rol == "admin" %}
+          <form method="post" action="{% url 'pista_toggle' pista.pk %}" class="mt-2">
+            {% csrf_token %}
+            {% if pista.disponible %}
+              <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                <i class="bi bi-tools"></i> Marcar mantenimiento
+              </button>
+            {% else %}
+              <button type="submit" class="btn btn-sm btn-outline-success w-100">
+                <i class="bi bi-check-circle"></i> Activar pista
+              </button>
+            {% endif %}
+          </form>
+        {% endif %}
       </div>
     </div>
   </div>
