@@ -15,6 +15,7 @@
         </div>
         <hr>
         <p><strong><i class="bi bi-calendar"></i> Fechas:</strong> {{ torneo.fecha_inicio|date:"d/m/Y" }} — {{ torneo.fecha_fin|date:"d/m/Y" }}</p>
+        <p><strong><i class="bi bi-clock"></i> Horario:</strong> {{ torneo.hora_inicio|date:"H:i" }} — {{ torneo.hora_fin|date:"H:i" }}</p>
         <p><strong><i class="bi bi-diagram-3"></i> Tipo:</strong> {{ torneo.get_tipo_display }}</p>
         <p><strong><i class="bi bi-person"></i> Organizador:</strong> {{ torneo.admin.username }}</p>
 

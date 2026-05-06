@@ -16,6 +16,8 @@ class Torneo(models.Model):
     tipo = models.CharField(max_length=20, choices=TIPOS)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
+    hora_inicio = models.TimeField(default="09:00")
+    hora_fin = models.TimeField(default="14:00")
     estado = models.CharField(max_length=20, choices=ESTADOS, default="planificado")
     creado = models.DateTimeField(auto_now_add=True)
 

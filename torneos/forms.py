@@ -6,12 +6,14 @@ from .models import Torneo
 class TorneoForm(forms.ModelForm):
     class Meta:
         model = Torneo
-        fields = ["nombre", "tipo", "fecha_inicio", "fecha_fin"]
+        fields = ["nombre", "tipo", "fecha_inicio", "fecha_fin", "hora_inicio", "hora_fin"]
         widgets = {
             "nombre": forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre del torneo"}),
             "tipo": forms.Select(attrs={"class": "form-select"}),
             "fecha_inicio": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
             "fecha_fin": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+            "hora_inicio": forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
+            "hora_fin": forms.TimeInput(attrs={"type": "time", "class": "form-control"}),
         }
         help_texts = {
             "fecha_inicio": "Fecha de inicio del torneo.",
