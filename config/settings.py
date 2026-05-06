@@ -5,6 +5,7 @@ Production-ready from day one.
 
 from pathlib import Path
 from decouple import config
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
@@ -13,6 +14,9 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-me")
 DEBUG = config("DEBUG", default=True, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=lambda v: [s.strip() for s in v.split(",")])
+RAILWAY_DOMAIN = config("RAILWAY_PUBLIC_DOMAIN", default="")
+if RAILWAY_DOMAIN and RAILWAY_DOMAIN not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
 
 # ─── Apps ─────────────────────────────────────────
 DJANGO_APPS = [
@@ -70,7 +74,7 @@ TEMPLATES = [
 ]
 
 # ─── Database ─────────────────────────────────────
-# PostgreSQL in production (Railway), SQLite fallback for local dev
+# PostgreSQL in production (Railway DATABASE_URL), SQLite fallback for local dev
 DATABASES = {
     "default": {
         "ENGINE": config("DB_ENGINE", default="django.db.backends.sqlite3"),
@@ -81,6 +85,10 @@ DATABASES = {
         "PORT": config("DB_PORT", default=""),
     }
 }
+
+# Override with DATABASE_URL if provided (Railway sets this automatically)
+if config("DATABASE_URL", default=""):
+    DATABASES["default"] = dj_database_url.parse(config("DATABASE_URL"))
 
 # ─── Password validation ──────────────────────────
 AUTH_PASSWORD_VALIDATORS = [
