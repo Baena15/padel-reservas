@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+
+{% block title %}{{ torneo.nombre }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h3 class="card-title"><i class="bi bi-trophy-fill"></i> {{ torneo.nombre }}</h3>
+          <span class="badge {% if torneo.estado == 'planificado' %}bg-info{% elif torneo.estado == 'en_curso' %}bg-success{% else %}bg-secondary{% endif %}">
+            {{ torneo.get_estado_display }}
+          </span>
+        </div>
+        <hr>
+        <p><strong><i class="bi bi-calendar"></i> Fechas:</strong> {{ torneo.fecha_inicio|date:"d/m/Y" }} — {{ torneo.fecha_fin|date:"d/m/Y" }}</p>
+        <p><strong><i class="bi bi-diagram-3"></i> Tipo:</strong> {{ torneo.get_tipo_display }}</p>
+        <p><strong><i class="bi bi-person"></i> Organizador:</strong> {{ torneo.admin.username }}</p>
+        <a href="{% url 'torneo_list' %}" class="btn btn-outline-dark">Volver a torneos</a>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-dice-5"></i> Partidos del torneo ({{ partidos|length }})</h5>
+      </div>
+      {% if partidos %}
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-success">
+              <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Pista</th>
+                <th>Jugador 1</th>
+                <th>Jugador 2</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in partidos %}
+              <tr>
+                <td>{{ p.fecha|date:"d/m/Y" }}</td>
+                <td>{{ p.hora_inicio|date:"H:i" }}</td>
+                <td>{{ p.pista }}</td>
+                <td>{{ p.jugador1.get_full_name|default:p.jugador1.username }}</td>
+                <td>{{ p.jugador2.get_full_name|default:p.jugador2.username }}</td>
+                <td>
+                  {% if p.resultado %}
+                    {{ p.resultado }}
+                  {% else %}
+                    <span class="text-muted">—</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% else %}
+        <div class="card-body text-muted">Aún no hay partidos programados en este torneo.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

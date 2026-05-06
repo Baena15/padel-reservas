@@ -12,6 +12,7 @@ urlpatterns = [
     path("clases/", include("clases.urls")),
     path("partidos/", include("partidos.urls")),
     path("torneos/", include("torneos.urls")),
+    path("pagos/", include("pagos.urls")),
 ]
 
 if settings.DEBUG:

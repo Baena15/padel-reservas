@@ -10,6 +10,7 @@ from dateutil.relativedelta import relativedelta
 
 from .models import Reserva, ReservaRecurrente
 from .forms import ReservaForm
+from pagos.models import Pago
 
 
 class ReservaListView(LoginRequiredMixin, ListView):
@@ -82,6 +83,16 @@ class ReservaCreateView(LoginRequiredMixin, CreateView):
             messages.success(self.request, "Reserva recurrente creada correctamente.")
         else:
             messages.success(self.request, "Reserva creada correctamente.")
+
+        # Generar pago pendiente por la reserva
+        Pago.objects.create(
+            usuario=self.request.user,
+            concepto="reserva",
+            referencia_id=self.object.pk,
+            monto=15.00,
+            estado="pendiente",
+        )
+        messages.info(self.request, "Se ha generado un pago de 15€ por tu reserva. Ve a 'Mis pagos' para completarlo.")
         return resp
 
 

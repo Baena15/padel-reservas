@@ -3,6 +3,64 @@
 {% block title %}Partidos{% endblock %}
 
 {% block content %}
-<h2><i class="bi bi-people-fill"></i> Partidos abiertos</h2>
-<p class="text-muted">Únete a un partido o crea el tuyo.</p>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h2><i class="bi bi-people-fill"></i> Partidos</h2>
+  {% if user.is_authenticated %}
+    <a href="{% url 'partido_create' %}" class="btn btn-success"><i class="bi bi-plus-lg"></i> Crear partido</a>
+  {% endif %}
+</div>
+
+<div class="btn-group mb-4" role="group">
+  <a href="?filtro=abiertos" class="btn {% if filtro == 'abiertos' %}btn-success{% else %}btn-outline-success{% endif %}">Abiertos</a>
+  {% if user.is_authenticated %}
+    <a href="?filtro=mis_partidos" class="btn {% if filtro == 'mis_partidos' %}btn-success{% else %}btn-outline-success{% endif %}">Mis partidos</a>
+  {% endif %}
+</div>
+
+{% if partidos %}
+  <div class="row g-4">
+    {% for partido in partidos %}
+    <div class="col-md-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <div class="d-flex justify-content-between align-items-start">
+            <h5 class="card-title">{{ partido.fecha|date:"d/m/Y" }}</h5>
+            <span class="badge {% if partido.estado == 'abierto' %}bg-success{% elif partido.estado == 'cerrado' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+              {{ partido.get_estado_display }}
+            </span>
+          </div>
+          <p class="card-text text-muted mb-1">
+            <i class="bi bi-clock"></i> {{ partido.hora_inicio|date:"H:i" }} - {{ partido.hora_fin|date:"H:i" }}
+          </p>
+          <p class="card-text text-muted mb-1">
+            <i class="bi bi-geo-alt"></i> {{ partido.pista }}
+          </p>
+          <p class="card-text text-muted mb-1">
+            <i class="bi bi-people"></i> {{ partido.jugadores.count }} / {{ partido.max_jugadores }} jugadores
+          </p>
+          {% if partido.nivel_minimo %}
+            <p class="card-text text-muted mb-1">
+              <i class="bi bi-bar-chart"></i> Nivel mínimo: {{ partido.get_nivel_minimo_display }}
+            </p>
+          {% endif %}
+          <p class="card-text text-muted small">
+            <i class="bi bi-person"></i> Creado por {{ partido.creador.username }}
+          </p>
+        </div>
+        <div class="card-footer bg-white border-top-0">
+          <a href="{% url 'partido_detail' partido.pk %}" class="btn btn-outline-success btn-sm w-100">Ver detalle</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+{% else %}
+  <div class="text-center py-5">
+    <i class="bi bi-people display-1 text-muted"></i>
+    <p class="mt-3 text-muted">No hay partidos disponibles.</p>
+    {% if user.is_authenticated %}
+      <a href="{% url 'partido_create' %}" class="btn btn-success">Crea el primero</a>
+    {% endif %}
+  </div>
+{% endif %}
 {% endblock %}

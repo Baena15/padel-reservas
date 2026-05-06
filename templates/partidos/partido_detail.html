@@ -1,0 +1,82 @@
+{% extends 'layout.html' %}
+
+{% block title %}Detalle del partido{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start">
+          <h3 class="card-title"><i class="bi bi-people-fill"></i> Partido</h3>
+          <span class="badge {% if partido.estado == 'abierto' %}bg-success{% elif partido.estado == 'cerrado' %}bg-warning text-dark{% else %}bg-secondary{% endif %}">
+            {{ partido.get_estado_display }}
+          </span>
+        </div>
+        <hr>
+        <p><strong><i class="bi bi-calendar"></i> Fecha:</strong> {{ partido.fecha|date:"l, d/m/Y" }}</p>
+        <p><strong><i class="bi bi-clock"></i> Horario:</strong> {{ partido.hora_inicio|date:"H:i" }} - {{ partido.hora_fin|date:"H:i" }}</p>
+        <p><strong><i class="bi bi-geo-alt"></i> Pista:</strong> {{ partido.pista }}</p>
+        <p><strong><i class="bi bi-people"></i> Jugadores:</strong> {{ partido.jugadores.count }} / {{ partido.max_jugadores }}</p>
+        {% if partido.nivel_minimo %}
+          <p><strong><i class="bi bi-bar-chart"></i> Nivel mínimo:</strong> {{ partido.get_nivel_minimo_display }}</p>
+        {% endif %}
+        <p><strong><i class="bi bi-person"></i> Creador:</strong> {{ partido.creador.username }}</p>
+
+        <div class="mt-4">
+          {% if user.is_authenticated %}
+            {% if ya_unido %}
+              <a href="{% url 'abandonar_partido' partido.pk %}" class="btn btn-outline-danger" onclick="return confirm('¿Abandonar este partido?')">
+                <i class="bi bi-x-lg"></i> Abandonar
+              </a>
+            {% elif partido.estado == 'abierto' and partido.plazas_disponibles > 0 %}
+              <a href="{% url 'unirse_partido' partido.pk %}" class="btn btn-success">
+                <i class="bi bi-plus-lg"></i> Unirme al partido
+              </a>
+            {% elif partido.estado != 'abierto' %}
+              <button class="btn btn-secondary" disabled>Partido cerrado</button>
+            {% else %}
+              <button class="btn btn-secondary" disabled>Completo</button>
+            {% endif %}
+
+            {% if es_creador and partido.estado == 'abierto' %}
+              <a href="{% url 'cerrar_partido' partido.pk %}" class="btn btn-warning ms-2" onclick="return confirm('¿Cerrar el partido?')">
+                <i class="bi bi-lock"></i> Cerrar
+              </a>
+            {% endif %}
+          {% else %}
+            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-secondary">Inicia sesión para unirte</a>
+          {% endif %}
+          <a href="{% url 'partido_list' %}" class="btn btn-outline-dark ms-2">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-people-fill"></i> Jugadores apuntados ({{ jugadores.count }})</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for j in jugadores %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <span>
+            {{ j.jugador.get_full_name|default:j.jugador.username }}
+            {% if j.jugador == partido.creador %}
+              <span class="badge bg-info">Creador</span>
+            {% endif %}
+            {% if j.confirmado %}
+              <span class="badge bg-success">Confirmado</span>
+            {% else %}
+              <span class="badge bg-warning text-dark">Pendiente</span>
+            {% endif %}
+          </span>
+          <span class="text-muted small">{{ j.fecha_union|date:"d/m/Y H:i" }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">Aún no hay jugadores apuntados.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

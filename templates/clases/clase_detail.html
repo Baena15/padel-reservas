@@ -1,0 +1,56 @@
+{% extends 'layout.html' %}
+
+{% block title %}Detalle de clase{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h3 class="card-title"><i class="bi bi-person-video3"></i> Clase con {{ clase.monitor }}</h3>
+        <hr>
+        <p><strong><i class="bi bi-calendar"></i> Fecha:</strong> {{ clase.fecha|date:"l, d/m/Y" }}</p>
+        <p><strong><i class="bi bi-clock"></i> Horario:</strong> {{ clase.hora_inicio|date:"H:i" }} - {{ clase.hora_fin|date:"H:i" }}</p>
+        <p><strong><i class="bi bi-geo-alt"></i> Pista:</strong> {{ clase.pista }}</p>
+        <p><strong><i class="bi bi-people"></i> Plazas:</strong> {{ clase.plazas_disponibles }} disponibles de {{ clase.max_alumnos }}</p>
+        <p><strong><i class="bi bi-cash-coin"></i> Precio:</strong> {{ clase.precio }}€</p>
+
+        <div class="mt-4">
+          {% if user.is_authenticated %}
+            {% if ya_inscrito %}
+              <a href="{% url 'desinscribir_clase' clase.pk %}" class="btn btn-outline-danger" onclick="return confirm('¿Desinscribirte de esta clase?')">
+                <i class="bi bi-x-lg"></i> Desinscribirme
+              </a>
+            {% elif clase.plazas_disponibles > 0 %}
+              <a href="{% url 'inscribir_clase' clase.pk %}" class="btn btn-success">
+                <i class="bi bi-check-lg"></i> Inscribirme
+              </a>
+            {% else %}
+              <button class="btn btn-secondary" disabled>Completo</button>
+            {% endif %}
+          {% else %}
+            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline-secondary">Inicia sesión para inscribirte</a>
+          {% endif %}
+          <a href="{% url 'clase_list' %}" class="btn btn-outline-dark ms-2">Volver</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm mt-4">
+      <div class="card-header bg-light">
+        <h5 class="mb-0"><i class="bi bi-people-fill"></i> Alumnos inscritos ({{ inscritos.count }})</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for i in inscritos %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ i.alumno.get_full_name|default:i.alumno.username }}
+          <span class="text-muted small">{{ i.fecha_inscripcion|date:"d/m/Y H:i" }}</span>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-muted">Aún no hay alumnos inscritos.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}
