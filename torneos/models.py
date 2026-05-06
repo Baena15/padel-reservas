@@ -44,3 +44,20 @@ class PartidoTorneo(models.Model):
 
     def __str__(self):
         return f"{self.jugador1.username} vs {self.jugador2.username} ({self.torneo.nombre})"
+
+
+class InscripcionTorneo(models.Model):
+    torneo = models.ForeignKey(Torneo, on_delete=models.CASCADE, related_name="inscripciones")
+    jugador = models.ForeignKey(User, on_delete=models.CASCADE, related_name="inscripciones_torneo")
+    pareja = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True,
+        related_name="inscripciones_torneo_pareja"
+    )
+    fecha_inscripcion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ["torneo", "jugador"]
+        ordering = ["fecha_inscripcion"]
+
+    def __str__(self):
+        return f"{self.jugador.username} en {self.torneo.nombre}"
