@@ -18,6 +18,11 @@ RAILWAY_DOMAIN = config("RAILWAY_PUBLIC_DOMAIN", default="")
 if RAILWAY_DOMAIN and RAILWAY_DOMAIN not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
 
+# ─── CSRF ─────────────────────────────────────────
+CSRF_TRUSTED_ORIGINS = []
+if RAILWAY_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{RAILWAY_DOMAIN}")
+
 # ─── Apps ─────────────────────────────────────────
 DJANGO_APPS = [
     "django.contrib.admin",
