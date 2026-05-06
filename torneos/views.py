@@ -41,7 +41,9 @@ class TorneoDetailView(DetailView):
         context["inscripciones"] = self.object.inscripciones.select_related(
             "jugador", "pareja"
         ).filter(
-            Q(pareja__isnull=True) | Q(jugador__id__lt=F("pareja__id"))
+            Q(pareja__isnull=True, pareja_nombre="") |  # individuales
+            Q(pareja__isnull=False, jugador__id__lt=F("pareja__id")) |  # parejas registradas (una vez)
+            Q(pareja__isnull=True, pareja_nombre__gt="")  # parejas externas
         ).order_by("fecha_inscripcion")
         if self.request.user.is_authenticated:
             context["ya_inscrito"] = self.object.inscripciones.filter(
@@ -102,12 +104,24 @@ class TorneoInscribirParejaView(LoginRequiredMixin, FormView):
 
     def form_valid(self, form):
         pareja = form.cleaned_data["pareja"]
-        if self.torneo.inscripciones.filter(jugador=pareja).exists():
-            messages.error(self.request, "Tu pareja ya está inscrita en este torneo.")
-            return redirect("torneo_detail", pk=self.torneo.pk)
-        InscripcionTorneo.objects.create(torneo=self.torneo, jugador=self.request.user, pareja=pareja)
-        InscripcionTorneo.objects.create(torneo=self.torneo, jugador=pareja, pareja=self.request.user)
-        messages.success(self.request, f"¡Te has inscrito al torneo con {pareja.username}!")
+        nombre = form.cleaned_data.get("pareja_nombre", "")
+        apellido = form.cleaned_data.get("pareja_apellido", "")
+
+        if pareja:
+            if self.torneo.inscripciones.filter(jugador=pareja).exists():
+                messages.error(self.request, "Tu pareja ya está inscrita en este torneo.")
+                return redirect("torneo_detail", pk=self.torneo.pk)
+            InscripcionTorneo.objects.create(torneo=self.torneo, jugador=self.request.user, pareja=pareja)
+            InscripcionTorneo.objects.create(torneo=self.torneo, jugador=pareja, pareja=self.request.user)
+            messages.success(self.request, f"¡Te has inscrito al torneo con {pareja.username}!")
+        else:
+            InscripcionTorneo.objects.create(
+                torneo=self.torneo,
+                jugador=self.request.user,
+                pareja_nombre=nombre,
+                pareja_apellido=apellido,
+            )
+            messages.success(self.request, f"¡Te has inscrito al torneo con {nombre} {apellido}!")
         return redirect("torneo_detail", pk=self.torneo.pk)
 
     def get_context_data(self, **kwargs):

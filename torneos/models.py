@@ -55,6 +55,8 @@ class InscripcionTorneo(models.Model):
         User, on_delete=models.CASCADE, null=True, blank=True,
         related_name="inscripciones_torneo_pareja"
     )
+    pareja_nombre = models.CharField(max_length=50, blank=True, verbose_name="Nombre pareja (externa)")
+    pareja_apellido = models.CharField(max_length=50, blank=True, verbose_name="Apellido pareja (externa)")
     fecha_inscripcion = models.DateTimeField(auto_now_add=True)
 
     class Meta:
