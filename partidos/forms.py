@@ -35,13 +35,14 @@ FRANJAS_HORARIAS = [
 class PartidoForm(forms.ModelForm):
     class Meta:
         model = Partido
-        fields = ["pista", "fecha", "hora_inicio", "nivel_minimo", "max_jugadores"]
+        fields = ["pista", "fecha", "hora_inicio", "nivel_minimo", "max_jugadores", "es_mixto"]
         widgets = {
             "fecha": forms.DateInput(attrs={"type": "date", "class": "form-control"}),
             "hora_inicio": forms.Select(choices=FRANJAS_HORARIAS, attrs={"class": "form-select"}),
             "pista": forms.Select(attrs={"class": "form-select"}),
             "nivel_minimo": forms.Select(attrs={"class": "form-select"}),
             "max_jugadores": forms.NumberInput(attrs={"class": "form-control", "min": 2, "max": 4}),
+            "es_mixto": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
     def __init__(self, *args, **kwargs):

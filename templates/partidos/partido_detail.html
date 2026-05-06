@@ -18,6 +18,9 @@
         <p><strong><i class="bi bi-clock"></i> Horario:</strong> {{ partido.hora_inicio|date:"H:i" }} - {{ partido.hora_fin|date:"H:i" }}</p>
         <p><strong><i class="bi bi-geo-alt"></i> Pista:</strong> {{ partido.pista }}</p>
         <p><strong><i class="bi bi-people"></i> Jugadores:</strong> {{ partido.jugadores.count }} / {{ partido.max_jugadores }}</p>
+        {% if partido.es_mixto %}
+          <p><strong><i class="bi bi-gender-ambiguous"></i> Modalidad:</strong> <span class="badge bg-info">Mixto</span></p>
+        {% endif %}
         {% if partido.nivel_minimo %}
           <p><strong><i class="bi bi-bar-chart"></i> Nivel mínimo:</strong> {{ partido.get_nivel_minimo_display }}</p>
         {% endif %}

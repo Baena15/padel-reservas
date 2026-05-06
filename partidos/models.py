@@ -16,6 +16,7 @@ class Partido(models.Model):
     hora_fin = models.TimeField()
     nivel_minimo = models.CharField(max_length=20, choices=CATEGORIAS)
     max_jugadores = models.PositiveIntegerField(default=4)
+    es_mixto = models.BooleanField(default=False, verbose_name="Partido mixto")
     estado = models.CharField(max_length=20, choices=ESTADOS, default="abierto")
     creado = models.DateTimeField(auto_now_add=True)
 
