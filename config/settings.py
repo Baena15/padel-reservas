@@ -15,13 +15,19 @@ SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-me")
 DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=lambda v: [s.strip() for s in v.split(",")])
 RAILWAY_DOMAIN = config("RAILWAY_PUBLIC_DOMAIN", default="")
+CUSTOM_DOMAIN = config("CUSTOM_DOMAIN", default="")
+
 if RAILWAY_DOMAIN and RAILWAY_DOMAIN not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RAILWAY_DOMAIN)
+if CUSTOM_DOMAIN and CUSTOM_DOMAIN not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(CUSTOM_DOMAIN)
 
 # ─── CSRF ─────────────────────────────────────────
 CSRF_TRUSTED_ORIGINS = []
 if RAILWAY_DOMAIN:
     CSRF_TRUSTED_ORIGINS.append(f"https://{RAILWAY_DOMAIN}")
+if CUSTOM_DOMAIN:
+    CSRF_TRUSTED_ORIGINS.append(f"https://{CUSTOM_DOMAIN}")
 
 # ─── Apps ─────────────────────────────────────────
 DJANGO_APPS = [
