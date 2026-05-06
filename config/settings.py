@@ -12,7 +12,7 @@ TEMPLATES_DIR = BASE_DIR / "templates"
 
 # ─── Security ─────────────────────────────────────
 SECRET_KEY = config("SECRET_KEY", default="django-insecure-dev-key-change-me")
-DEBUG = config("DEBUG", default=True, cast=bool)
+DEBUG = config("DEBUG", default=False, cast=bool)
 ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=lambda v: [s.strip() for s in v.split(",")])
 RAILWAY_DOMAIN = config("RAILWAY_PUBLIC_DOMAIN", default="")
 if RAILWAY_DOMAIN and RAILWAY_DOMAIN not in ALLOWED_HOSTS:
@@ -121,6 +121,28 @@ MEDIA_ROOT = BASE_DIR / "media"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 LOGIN_URL = "/accounts/login/"
+
+# ─── Logging ──────────────────────────────────────
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["console"],
+            "level": config("DJANGO_LOG_LEVEL", default="INFO"),
+            "propagate": False,
+        },
+    },
+}
 
 # ─── Default primary key ──────────────────────────
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
